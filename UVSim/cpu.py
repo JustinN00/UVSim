@@ -6,10 +6,25 @@ MEMORY_SIZE = 100
 def temp_add(num1, num2):
     return num1 + num2
 
+def temp(*args):
+    pass
 
 
+
+#TODO move method references to actual methods
 operations = {
-    "10": {"method": temp_add, "store": "accumulator"},
+    "10": {"method": temp, "store": "memory", "args": ["memory"]}, #READ
+    "11": {"method": temp, "store": None, "args": ["memory"]}, #WRITE
+    "20": {"method": temp, "store": "accumulator", "args": ["memory"]}, #LOAD
+    "21": {"method": temp, "store": "memory", "args": ["accumulator"]}, #STORE
+    "30": {"method": temp_add, "store": "accumulator", "args": ["accumulator", "memory"]}, #ADD
+    "31": {"method": temp, "store": "accumulator", "args": ["accumulator", "memory"]}, #SUBTRACT
+    "32": {"method": temp, "store": "accumulator", "args": ["accumulator", "memory"]}, #DIVIDE
+    "33": {"method": temp, "store": "accumulator", "args": ["accumulator", "memory"]}, #MULTIPLY
+    "40": {"method": temp, "store": "counter", "args": ["memory"]}, #BRANCH
+    "41": {"method": temp, "store": "counter", "args": ["accumulator", "counter"]}, #BRANCHNEG
+    "42": {"method": temp, "store": "counter", "args": ["accumulator", "counter"]}, #BRANCHZERO
+    "43": {"method": temp, "store": None, "args": []}, #HALT
 }
 
 
@@ -49,20 +64,33 @@ class CPU:
             exit(1)
     
     def run_program(self, filename: str):
-        self.load_program()
+        self.load_program(filename)
         while True:
+             if self.instruction_counter == 100:
+                 raise ValueError("CPU instruction counter has exceeded max memory...")
              instruction = str(self.memory[self.instruction_counter])
-             negative = True if "-" in instruction else False
              op_code = instruction[-4:-2]
              argument = instruction[-2:]
 
              operation = operations[op_code]
-             args = [argument] if operations["args"] else []
+
+             args = []
+             for arg in operation["args"]:
+                 match arg:
+                     case "memory": 
+                         args.append(int(argument))
+                     case "accumulator":
+                         args.append(self.accumulator)
+                     case "counter": 
+                         args.append(self.instruction_counter)
+
              value = operation["method"](*args)
              match operation["store"]:
                  case "accumulator":
                      self.accumulator = value
                  case "memory":
                      self.memory[args] = value
-
+                 case "counter":
+                     self.instruction_counter = value
              self.instruction_counter += 1
+
