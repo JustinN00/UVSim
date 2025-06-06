@@ -1,26 +1,65 @@
-# test_arithmetic_operations.py
+import unittest
+from UVSim.cpu import CPU
+from UVSim.arithmetic_operations import perform_operation
 
-from arithmetic_operations import *
+class TestArithmeticOperations:
+    def test_add(self):
+        test_cpu = CPU()
+        test_cpu.memory[0] = 10
+        test_cpu.accumulator = 15
+        perform_operation(test_cpu, 30, 0)
+        assert test_cpu.accumulator == 25
 
-# Load sample values into memory
-load_memory(10, 25)
-load_memory(20, 5)
+    def test_sub(self):
+        test_cpu = CPU()
+        test_cpu.memory[0] = 10
+        test_cpu.accumulator = 15
+        perform_operation(test_cpu, 31, 0)
+        assert test_cpu.accumulator == 5
 
-# Set initial accumulator value
-set_accumulator(10)
+    def test_div(self):
+        test_cpu = CPU()
+        test_cpu.memory[0] = 10
+        test_cpu.accumulator = 20
+        perform_operation(test_cpu, 32, 0)
+        assert test_cpu.accumulator == 2
 
-# Perform operations
-perform_operation(ADD, 10)        # 10 + 25 = 35
-print(f"After ADD: {get_accumulator()}")  # Expected: 35
+    def test_div_by_zero(self):
+        test_cpu = CPU()
+        test_cpu.memory[0] = 0
+        test_cpu.accumulator = 10
+        division_error = False
+        try:
+            perform_operation(test_cpu,32, 0)
+        except ZeroDivisionError:
+            division_error = True
+        assert division_error
 
-perform_operation(SUBTRACT, 20)   # 35 - 5 = 30
-print(f"After SUBTRACT: {get_accumulator()}")  # Expected: 30
+    def test_mult(self):
+        test_cpu = CPU()
+        test_cpu.memory[0] = 2
+        test_cpu.accumulator = 10
+        perform_operation(test_cpu, 33, 0)
+        assert test_cpu.accumulator == 20
 
-perform_operation(MULTIPLY, 20)   # 30 * 5 = 150
-print(f"After MULTIPLY: {get_accumulator()}")  # Expected: 150
+    def test_invalid_op(self):
+        test_cpu = CPU()
+        error = False
+        try:
+            perform_operation(test_cpu, 1, 0)
+        except ValueError:
+            error = True
+        assert error
 
-perform_operation(DIVIDE, 10)     # 150 // 25 = 6
-print(f"After DIVIDE: {get_accumulator()}")  # Expected: 6
+    def test_invalid_memory(self):
+        test_cpu = CPU()
+        error = False
+        try:
+            perform_operation(test_cpu, 30, -1)
+        except ValueError:
+            error = True
+        assert error
 
-# Final result
-print(f"Final Accumulator: {get_accumulator()}")  # Should print: 6
+
+if __name__ == "__main__":
+    unittest.main()

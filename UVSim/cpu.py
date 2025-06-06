@@ -1,32 +1,25 @@
+from UVSim.arithmetic_operations import perform_operation
+from UVSim.control_operations import branch, branchneg, branchzero, halt
+from UVSim.io_operations import read, write
+from UVSim.load_store_operations import load, store
+
+
 MEMORY_SIZE = 100
 
-
-
-
-def temp_add(num1, num2):
-    return num1 + num2
-
-def temp(*args):
-    pass
-
-
-
-#TODO move method references to actual methods
 operations = {
-    "10": {"method": temp, "store": "memory", "args": ["memory"]}, #READ
-    "11": {"method": temp, "store": None, "args": ["memory"]}, #WRITE
-    "20": {"method": temp, "store": "accumulator", "args": ["memory"]}, #LOAD
-    "21": {"method": temp, "store": "memory", "args": ["accumulator"]}, #STORE
-    "30": {"method": temp_add, "store": "accumulator", "args": ["accumulator", "memory"]}, #ADD
-    "31": {"method": temp, "store": "accumulator", "args": ["accumulator", "memory"]}, #SUBTRACT
-    "32": {"method": temp, "store": "accumulator", "args": ["accumulator", "memory"]}, #DIVIDE
-    "33": {"method": temp, "store": "accumulator", "args": ["accumulator", "memory"]}, #MULTIPLY
-    "40": {"method": temp, "store": "counter", "args": ["memory"]}, #BRANCH
-    "41": {"method": temp, "store": "counter", "args": ["accumulator", "counter"]}, #BRANCHNEG
-    "42": {"method": temp, "store": "counter", "args": ["accumulator", "counter"]}, #BRANCHZERO
-    "43": {"method": temp, "store": None, "args": []}, #HALT
+    "10": {"method": read, "args": ["memory"]}, #READ
+    "11": {"method": write, "args": ["memory"]}, #WRITE
+    "20": {"method": load, "args": ["memory"]}, #LOAD
+    "21": {"method": store, "args": ["accumulator"]}, #STORE
+    "30": {"method": perform_operation, "args": ["op_code","memory"]}, #ADD
+    "31": {"method": perform_operation, "args": ["op_code","memory"]}, #SUBTRACT
+    "32": {"method": perform_operation, "args": ["op_code","memory"]}, #DIVIDE
+    "33": {"method": perform_operation, "args": ["op_code","memory"]}, #MULTIPLY
+    "40": {"method": branch, "args": ["argument"]}, #BRANCH
+    "41": {"method": branchneg, "args": ["argument"]}, #BRANCHNEG
+    "42": {"method": branchzero, "args": ["argument"]}, #BRANCHZERO
+    "43": {"method": halt, "args": []}, #HALT
 }
-
 
 
 class CPU:
@@ -67,14 +60,14 @@ class CPU:
         self.load_program(filename)
         while True:
              if self.instruction_counter == 100:
-                 raise ValueError("CPU instruction counter has exceeded max memory...")
+                 break
              instruction = str(self.memory[self.instruction_counter])
              op_code = instruction[-4:-2]
              argument = instruction[-2:]
 
              operation = operations[op_code]
 
-             args = []
+             args = [self]
              for arg in operation["args"]:
                  match arg:
                      case "memory": 
@@ -83,14 +76,10 @@ class CPU:
                          args.append(self.accumulator)
                      case "counter": 
                          args.append(self.instruction_counter)
+                     case "op_code":
+                         args.append(op_code)
+            
+             operation["method"](args)
 
-             value = operation["method"](*args)
-             match operation["store"]:
-                 case "accumulator":
-                     self.accumulator = value
-                 case "memory":
-                     self.memory[args] = value
-                 case "counter":
-                     self.instruction_counter = value
              self.instruction_counter += 1
-
+        print("Program stopped")

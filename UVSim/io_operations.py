@@ -1,11 +1,10 @@
 # I/O Operations
 
 from UVSim.constants import MIN_WORD_VALUE, MAX_WORD_VALUE
-from UVSim.cpu import CPU
 
 
 # Read a word from the keyboard into a specific location in memory
-def read(cpu: CPU, address: int): 
+def read(cpu, address: int): 
     while True:
         try:
             value = int(input(f"READ value (store to memory[{address:02d}]): "))
@@ -19,6 +18,6 @@ def read(cpu: CPU, address: int):
 
 
 # Write a word from a specific location in memory to screen
-def write(cpu: CPU, address: int):
+def write(cpu, address: int):
     value = cpu.memory[address]
     print(f"WRITE value (from memory[{address:02d}]): {value:+05d}")

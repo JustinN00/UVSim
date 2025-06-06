@@ -1,41 +1,43 @@
 # test_control_operations.py
+import unittest
+from UVSim.control_operations import branch, branchneg, branchzero, halt
+from UVSim.cpu import CPU
 
-from control_operations import *
 
-# Load a small program into memory
-# Assume format: (opcode * 100) + operand
-# e.g., 4007 means BRANCH to address 7
+class TestControlOperations:
+    def test_branch(self):
+        test_cpu = CPU()
+        test_cpu.instruction_counter = 1
+        branch(test_cpu, 10)
+        assert test_cpu.instruction_counter == 9
 
-load_instruction(0, 4104)  # BRANCHNEG to 04 (accumulator is not negative -> skip)
-load_instruction(1, 4205)  # BRANCHZERO to 05 (accumulator is not zero -> skip)
-load_instruction(2, 4006)  # BRANCH to 06 (should jump unconditionally)
-load_instruction(3, 4300)  # HALT (should be skipped)
-load_instruction(4, 4300)  # HALT (should be skipped unless accumulator < 0)
-load_instruction(5, 4300)  # HALT (should be skipped unless accumulator == 0)
-load_instruction(6, 4300)  # HALT (should be hit)
+    def test_branchneg(self):
+        test_cpu = CPU()
+        test_cpu.instruction_counter = 1
+        test_cpu.accumulator = 1
+        branchneg(test_cpu, 10)
+        assert test_cpu.instruction_counter == 1
 
-# Test 1: accumulator > 0
-set_accumulator(5)
-print("Test 1: Accumulator > 0")
+        test_cpu.accumulator = -1
+        branchneg(test_cpu, 11)
+        assert test_cpu.instruction_counter == 10
+    
+    def test_branchzero(self):
+        test_cpu = CPU()
+        test_cpu.instruction_counter = 1
+        test_cpu.accumulator = 1
+        branchzero(test_cpu, 10)
+        assert test_cpu.instruction_counter == 1
 
-while not is_halted():
-    print(f"Executing instruction at {get_instruction_pointer()}")
-    execute_instruction()
+        test_cpu.accumulator = 0
+        branchzero(test_cpu, 10)
+        assert test_cpu.instruction_counter == 9
 
-print("Program halted.\n")
+    def test_halt(self):
+        test_cpu = CPU()
+        test_cpu.instruction_counter = 1
+        halt(test_cpu)
+        assert test_cpu.instruction_counter == 99
 
-# Reset state for Test 2: accumulator = 0
-set_accumulator(0)
-load_instruction(0, 4205)  # Change instruction to test BRANCHZERO
-
-# Reset environment
-instruction_pointer = 0
-halted = False
-
-print("Test 2: Accumulator == 0")
-
-while not is_halted():
-    print(f"Executing instruction at {get_instruction_pointer()}")
-    execute_instruction()
-
-print("Program halted.")
+if __name__ == "__main__":
+    unittest.main()
