@@ -1,26 +1,41 @@
-# test_arithmetic_operations.py
+# test_control_operations.py
 
-from arithmetic_operations import *
+from control_operations import *
 
-# Load sample values into memory
-load_memory(10, 25)
-load_memory(20, 5)
+# Load a small program into memory
+# Assume format: (opcode * 100) + operand
+# e.g., 4007 means BRANCH to address 7
 
-# Set initial accumulator value
-set_accumulator(10)
+load_instruction(0, 4104)  # BRANCHNEG to 04 (accumulator is not negative -> skip)
+load_instruction(1, 4205)  # BRANCHZERO to 05 (accumulator is not zero -> skip)
+load_instruction(2, 4006)  # BRANCH to 06 (should jump unconditionally)
+load_instruction(3, 4300)  # HALT (should be skipped)
+load_instruction(4, 4300)  # HALT (should be skipped unless accumulator < 0)
+load_instruction(5, 4300)  # HALT (should be skipped unless accumulator == 0)
+load_instruction(6, 4300)  # HALT (should be hit)
 
-# Perform operations
-perform_operation(ADD, 10)        # 10 + 25 = 35
-print(f"After ADD: {get_accumulator()}")  # Expected: 35
+# Test 1: accumulator > 0
+set_accumulator(5)
+print("Test 1: Accumulator > 0")
 
-perform_operation(SUBTRACT, 20)   # 35 - 5 = 30
-print(f"After SUBTRACT: {get_accumulator()}")  # Expected: 30
+while not is_halted():
+    print(f"Executing instruction at {get_instruction_pointer()}")
+    execute_instruction()
 
-perform_operation(MULTIPLY, 20)   # 30 * 5 = 150
-print(f"After MULTIPLY: {get_accumulator()}")  # Expected: 150
+print("Program halted.\n")
 
-perform_operation(DIVIDE, 10)     # 150 // 25 = 6
-print(f"After DIVIDE: {get_accumulator()}")  # Expected: 6
+# Reset state for Test 2: accumulator = 0
+set_accumulator(0)
+load_instruction(0, 4205)  # Change instruction to test BRANCHZERO
 
-# Final result
-print(f"Final Accumulator: {get_accumulator()}")  # Should print: 6
+# Reset environment
+instruction_pointer = 0
+halted = False
+
+print("Test 2: Accumulator == 0")
+
+while not is_halted():
+    print(f"Executing instruction at {get_instruction_pointer()}")
+    execute_instruction()
+
+print("Program halted.")
