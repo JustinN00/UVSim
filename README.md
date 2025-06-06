@@ -5,6 +5,11 @@ UVSim software simulator CS2450
 UVSim is a simple yet powerful virtual machine that interprets programs written in BasicML (Basic Machine Language). It simulates a computer system with CPU, registers, and main memory, capable of executing fundamental arithmetic, I/O, and control operations.
 System Architecture
 
+How to run:
+
+    To run the simulator, run the uvsim.py file in the command line and provide the filepath to your instruction set
+    example:   python uvsim.py "C:\\folder\\instructions.txt"
+
 UVSim consists of:
 
     100-word memory (locations 00-99)
