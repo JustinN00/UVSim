@@ -10,14 +10,14 @@ operations = {
     "10": {"method": read, "args": ["memory"]}, #READ
     "11": {"method": write, "args": ["memory"]}, #WRITE
     "20": {"method": load, "args": ["memory"]}, #LOAD
-    "21": {"method": store, "args": ["accumulator"]}, #STORE
+    "21": {"method": store, "args": ["memory"]}, #STORE
     "30": {"method": perform_operation, "args": ["op_code","memory"]}, #ADD
     "31": {"method": perform_operation, "args": ["op_code","memory"]}, #SUBTRACT
     "32": {"method": perform_operation, "args": ["op_code","memory"]}, #DIVIDE
     "33": {"method": perform_operation, "args": ["op_code","memory"]}, #MULTIPLY
-    "40": {"method": branch, "args": ["argument"]}, #BRANCH
-    "41": {"method": branchneg, "args": ["argument"]}, #BRANCHNEG
-    "42": {"method": branchzero, "args": ["argument"]}, #BRANCHZERO
+    "40": {"method": branch, "args": ["memory"]}, #BRANCH
+    "41": {"method": branchneg, "args": ["memory"]}, #BRANCHNEG
+    "42": {"method": branchzero, "args": ["memory"]}, #BRANCHZERO
     "43": {"method": halt, "args": []}, #HALT
 }
 
@@ -77,9 +77,8 @@ class CPU:
                      case "counter": 
                          args.append(self.instruction_counter)
                      case "op_code":
-                         args.append(op_code)
-            
-             operation["method"](args)
+                         args.append(int(op_code))
+             operation["method"](*args)
 
              self.instruction_counter += 1
         print("Program stopped")
