@@ -114,11 +114,14 @@ class NewCPU:
         self.accumulator = 0
         self.instruction_counter = 0
 
-    def load_program(self, filename: str):
+    def load_program(self, filename: str) -> str | None:
         self.accumulator = 0
         self.instruction_counter = 0
-        loaded_instructions = self.file_loader.load_file(filename)
+        loaded_instructions, error = self.file_loader.load_file(filename)
+        if error:
+            return error
         self.memory.store_instructions(loaded_instructions)
+        return None
 
     def run_next_command(self, user_input: str | None):
             instruction = str(self.memory.load(self.instruction_counter))

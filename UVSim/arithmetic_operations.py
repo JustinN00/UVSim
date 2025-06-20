@@ -26,4 +26,8 @@ def perform_operation(cpu, opcode: int, address: int):
     else:
         raise ValueError("Invalid opcode.")
     
-    return log_message + f"\nNew accumulator value: {cpu.accumulator}"
+    if cpu.accumulator > 9999:
+        cpu.accumulator -= 9999
+    elif cpu.accumulator < -9999:
+        cpu.accumulator += 9999
+    return log_message

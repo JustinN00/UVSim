@@ -13,12 +13,12 @@ class UVSimGUI:
         #Window setup
         self.window = tk.Tk()
         self.window.title("UVSim")
-        self.window.geometry("600x400")
+        # self.window.geometry("600x400")
 
         self.input_var = tk.StringVar()
 
         #Widget setup
-        self.file_label = tk.Label(self.window, text="No file selected", justify="left")
+        self.file_label = tk.Label(self.window, text="No file selected", justify="left", wraplength=150)
         self.file_button = tk.Button(self.window, text="Select File", command=self.select_file)
         self.run_button = tk.Button(self.window, text="Run Program", command=self.run_program)
         self.output = tk.Text(self.window)
@@ -26,12 +26,14 @@ class UVSimGUI:
         self.input.config(state="disabled")
         self.submit_button = tk.Button(self.window, text="Submit Input", command=self.submit_input)
 
-        self.file_label.pack(pady=20)
-        self.file_button.pack()
-        self.run_button.pack()
-        self.submit_button.pack()
-        self.input.pack()
-        self.output.pack()
+
+        self.file_label.grid(row=0, column=0, padx=10, pady=5, sticky='w')
+        self.file_button.grid(row=1, column=0, padx=10, pady=5, sticky='w')
+        self.run_button.grid(row=3, column=0, padx=10, pady=5, sticky='w')
+        self.output.grid(row=0, column=1, rowspan=4, columnspan=2, padx=10, pady=5, sticky='nsew')
+        self.input.grid(row=5, column=1, padx=10, pady=5, sticky='ew')
+        self.submit_button.grid(row=5, column=2, padx=10, pady=5, sticky='w')
+
         
         #Run
         self.window.mainloop()
@@ -52,7 +54,10 @@ class UVSimGUI:
         if self.file_path is None:
             return
         else:
-            self.cpu.load_program(self.file_path)
+            error = self.cpu.load_program(self.file_path)
+            if error:
+                self.output.insert(END, error)
+                return
             while self.cpu.instruction_counter < 100:
                 user_input = None
                 if str(self.cpu.memory.load(self.cpu.instruction_counter))[-4:-2] == "10":
@@ -65,7 +70,7 @@ class UVSimGUI:
     def get_valid_input(self) -> int:
         self.input.config(state="normal")
         self.input_ready = tk.BooleanVar(value=False)
-        self.output.insert(END, "Please enter input and click Submit.\n")
+        self.output.insert(END, "READ: enter a value and click submit\n")
         self.window.wait_variable(self.input_ready)
         self.input.config(state="disabled")
         return self.user_input_value
