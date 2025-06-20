@@ -1,23 +1,10 @@
 # I/O Operations
 
-from UVSim.constants import MIN_WORD_VALUE, MAX_WORD_VALUE
-
-
 # Read a word from the keyboard into a specific location in memory
-def read(cpu, address: int): 
-    while True:
-        try:
-            value = int(input(f"READ value (store to memory[{address:02d}]): "))
-            if MIN_WORD_VALUE <= value <= MAX_WORD_VALUE:
-                cpu.memory[address] = value
-                break
-            else:
-                print(f"Error: Value must be between {MIN_WORD_VALUE} and {MAX_WORD_VALUE}.")
-        except ValueError:
-            print("Error: Invalid input. Please enter a signed integer.")
-
-
+def read(cpu, user_input, address: int): 
+    cpu.memory.store(address, user_input)
+    
 # Write a word from a specific location in memory to screen
-def write(cpu, address: int):
-    value = cpu.memory[address]
-    print(f"WRITE value (from memory[{address:02d}]): {value:+05d}")
+def write(cpu, address: int) -> str:
+    value = cpu.memory.load(address)
+    return f"WRITE value (from memory[{address:02d}]): {value:+05d}"

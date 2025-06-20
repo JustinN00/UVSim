@@ -1,22 +1,17 @@
 
-from UVSim.cpu import CPU
-import sys
-import os
+from UVSim.cpu import NewCPU
+from UVSim.file_loader import FileLoader
+from UVSim.memory import Memory
+from UVSim.gui import UVSimGUI
 
 class UVSim:
     @staticmethod
-    def run_program(filename: str):
-        cpu = CPU()
-        cpu.run_program(filename)
-
-
+    def run_program():
+        file_loader = FileLoader()
+        memory = Memory()
+        cpu = NewCPU(memory, file_loader)
+        UVSimGUI(cpu)
+        
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        raise ValueError(f"Provide the instruction file path as an argument.")
-    instruction_file = sys.argv[1]
-    if not os.path.isfile(instruction_file):
-        raise FileNotFoundError(f"The file {instruction_file} was not found or is not a file.")
-
     sim = UVSim()
-    print(sys.argv[1])
-    sim.run_program(sys.argv[1])
+    sim.run_program()
