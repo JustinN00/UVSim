@@ -13,7 +13,6 @@ class UVSimGUI:
         #Window setup
         self.window = tk.Tk()
         self.window.title("UVSim")
-        # self.window.geometry("600x400")
 
         self.input_var = tk.StringVar()
 
