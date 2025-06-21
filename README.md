@@ -7,8 +7,13 @@ System Architecture
 
 How to run:
 
-    To run the simulator, run the uvsim.py file in the command line and provide the filepath to your instruction set
-    example:   python uvsim.py "C:\\folder\\instructions.txt"
+    To run the simulator, run the uvsim.py file in the command line
+    example:   python uvsim.py
+
+    Use the select file button to select a .txt file
+    Then use the run program button to run your program
+    If user input is required you will can enter it in the field next to the submit button, then click the button
+    
 
 UVSim consists of:
 
