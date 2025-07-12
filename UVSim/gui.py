@@ -470,7 +470,7 @@ class UVSimGUI:
             self.output.insert(END, "Error: Value must be between -9999 and 9999.\n")
         except ValueError:
             self.output.insert(END, "Error: Invalid input. Please enter a signed integer.\n")
-        self.output.see(END)
+            self.output.see(END)
         except ValueError:
             self.output.insert(END, "Error: Invalid input. Please enter a signed integer.\n")
             self.input.config(bg="red")
