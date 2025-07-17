@@ -139,6 +139,8 @@ class UVSimGUI:
         self.input_label.pack(side=tk.LEFT, padx=5)
         
         self.input_var = tk.StringVar()
+        self.input_ready = tk.BooleanVar()
+        self.input_ready.set(False)
         self.input = ttk.Entry(self.input_frame, textvariable=self.input_var)
         self.input.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
         self.input.config(state="disabled")
@@ -451,11 +453,11 @@ class UVSimGUI:
                 pass
 
     def get_valid_input(self) -> int:
+        self.input_ready.set(False)
         self.input.config(state="normal")
-        self.input_ready = False
         self.output.insert(END, "READ: enter a value and click submit\n")
         self.output.see(END)
-        self.window.wait_variable(self.input_var)
+        self.window.wait_variable(self.input_ready)
         self.input.config(state="disabled")
         return self.user_input_value
 
@@ -465,12 +467,9 @@ class UVSimGUI:
             if -9999 <= value <= 9999:
                 self.user_input_value = value
                 self.input_var.set("")
-                self.input_ready = True
+                self.input_ready.set(True)
                 return value
             self.output.insert(END, "Error: Value must be between -9999 and 9999.\n")
-        except ValueError:
-            self.output.insert(END, "Error: Invalid input. Please enter a signed integer.\n")
-        self.output.see(END)
         except ValueError:
             self.output.insert(END, "Error: Invalid input. Please enter a signed integer.\n")
             self.input.config(bg="red")
