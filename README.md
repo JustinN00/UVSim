@@ -74,15 +74,15 @@ GUI Controls
 
 The interface includes the following elements:
 
-- 'Open File': Load a .txt BasicML program
-- 'Save File' and 'Save As': Save the current program
-- Program Editor: Edit each instruction by line, using the Code and Value fields
-- Add, Update, Delete: Modify instructions
-- ↑, ↓, Cut, Copy, Paste: Rearrange or duplicate instructions
-- 'Run Program': Execute the program
-- Output panel: displays messages, errors, and program output
-- Input field: Accepts user input when prompted by READ instructions
-- Submit button: Submit typed input
+    'Open File': Load a .txt BasicML program
+    'Save File' and 'Save As': Save the current program
+    Program Editor: Edit each instruction by line, using the Code and Value fields
+    Add, Update, Delete: Modify instructions
+    ↑, ↓, Cut, Copy, Paste: Rearrange or duplicate instructions
+    'Run Program': Execute the program
+    Output panel: displays messages, errors, and program output
+    Input field: Accepts user input when prompted by READ instructions
+    Submit button: Submit typed input
 
 
 
@@ -90,6 +90,7 @@ Example Usage
 
 This sample program reads two numbers, adds them, and prints the result:
 
+```
 +1007
 +1008
 +2007
@@ -100,6 +101,7 @@ This sample program reads two numbers, adds them, and prints the result:
 +0000
 +0000
 +0000
+```
 
 If the two inputs are 4 and 5, the expected ouput is 9.
 
