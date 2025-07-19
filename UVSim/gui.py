@@ -98,24 +98,43 @@ class UVSimGUI:
         self.delete_button = ttk.Button(self.button_frame, text="Delete", command=self.delete_function)
         self.delete_button.grid(row=0, column=2, padx=2)
         
-        self.move_up_button = ttk.Button(self.button_frame, text="↑", width=2, command=self.move_function_up)
-        self.move_up_button.grid(row=1, column=0, padx=2)
-        
-        self.move_down_button = ttk.Button(self.button_frame, text="↓", width=2, command=self.move_function_down)
-        self.move_down_button.grid(row=1, column=1, padx=2)
-        
         self.cut_button = ttk.Button(self.button_frame, text="Cut", command=self.cut_function)
         self.cut_button.grid(row=1, column=2, padx=2)
         
         self.copy_button = ttk.Button(self.button_frame, text="Copy", command=self.copy_function)
-        self.copy_button.grid(row=2, column=0, padx=2)
+        self.copy_button.grid(row=1, column=0, padx=2)
         
         self.paste_button = ttk.Button(self.button_frame, text="Paste", command=self.paste_function)
-        self.paste_button.grid(row=2, column=1, padx=2)
+        self.paste_button.grid(row=1, column=1, padx=2)
         
         # Execution controls
         self.run_button = ttk.Button(self.left_panel, text="Run Program", command=self.run_program)
         self.run_button.pack(pady=10, fill=tk.X)
+
+        # Color scheme buttons
+        self.color_frame = ttk.Frame(self.left_panel)
+        self.color_frame.pack(fill=tk.X, pady=5)
+        
+        self.primary_color_btn = ttk.Button(
+            self.color_frame, 
+            text="Change Primary", 
+            command=lambda: self.change_single_color('primary')
+        )
+        self.primary_color_btn.pack(fill=tk.X, pady=2)
+        
+        self.secondary_color_btn = ttk.Button(
+            self.color_frame, 
+            text="Change Secondary", 
+            command=lambda: self.change_single_color('secondary')
+        )
+        self.secondary_color_btn.pack(fill=tk.X, pady=2)
+        
+        self.button_color_btn = ttk.Button(
+            self.color_frame, 
+            text="Change Button Color", 
+            command=self.change_button_color
+        )
+        self.button_color_btn.pack(fill=tk.X, pady=2)
 
         # Output area
         self.output_frame = ttk.Frame(self.right_panel)
@@ -153,6 +172,25 @@ class UVSimGUI:
         
         # Run
         self.window.mainloop()
+
+    def change_single_color(self, color_type):
+        #Change either primary or secondary color
+        color = colorchooser.askcolor(title=f"Choose {color_type.capitalize()} Color")
+        if color[1]:  # User didn't cancel
+            if color_type == 'primary':
+                self.current_primary = color[1]
+            else:
+                self.current_secondary = color[1]
+            self.save_color_scheme()
+            self.apply_color_scheme()
+
+    def change_button_color(self):
+        #Change the color of all buttons
+        color = colorchooser.askcolor(title="Choose Button Color")
+        if color[1]:  # User didn't cancel
+            style = ttk.Style()
+            style.configure('TButton', background=color[1])
+            self.save_color_scheme()
 
     def create_menu(self):
         menubar = tk.Menu(self.window)
@@ -208,8 +246,24 @@ class UVSimGUI:
             json.dump(colors, f)
             
     def apply_color_scheme(self):
-        # Apply colors to widgets
+        #Apply the current color scheme to all widgets
+        # Apply colors to main window
         self.window.configure(bg=self.current_primary)
+        
+        # Apply to frames
+        for frame in [self.main_frame, self.left_panel, self.right_panel, 
+                     self.editor_frame, self.edit_controls, self.button_frame,
+                     self.output_frame, self.input_frame, self.color_frame]:
+            frame.configure(style='TFrame')
+        
+        # Apply to text widgets
+        self.output.configure(bg=self.current_secondary)
+        self.function_list.configure(bg=self.current_secondary)
+        
+        # Apply to entry widgets
+        self.code_entry.configure(style='TEntry')
+        self.value_entry.configure(style='TEntry')
+        self.input.configure(style='TEntry')
         
         # Style configuration
         style = ttk.Style()
@@ -367,24 +421,6 @@ class UVSimGUI:
                     updated_item += f" {value}"
                 self.function_list.delete(index)
                 self.function_list.insert(index, updated_item)
-
-    def move_function_up(self):
-        selected = self.function_list.curselection()
-        if selected and selected[0] > 0:
-            index = selected[0]
-            item = self.function_list.get(index)
-            self.function_list.delete(index)
-            self.function_list.insert(index-1, item)
-            self.function_list.selection_set(index-1)
-
-    def move_function_down(self):
-        selected = self.function_list.curselection()
-        if selected and selected[0] < self.function_list.size()-1:
-            index = selected[0]
-            item = self.function_list.get(index)
-            self.function_list.delete(index)
-            self.function_list.insert(index+1, item)
-            self.function_list.selection_set(index+1)
 
     def cut_function(self):
         self.copy_function()
