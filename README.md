@@ -2,7 +2,7 @@
 UVSim software simulator CS2450
 
 
-UVSim is a simple yet powerful virtual machine that interprets programs written in BasicML (Basic Machine Language). It simulates a computer system with CPU, registers, and main memory, capable of executing fundamental arithmetic, I/O, and control operations.
+UVSim is a simple yet powerful virtual machine that interprets programs written in BasicML. It simulates a computer system with CPU, registers, and main memory, capable of executing fundamental arithmetic, I/O, and control operations.
 
 System Architecture
 
