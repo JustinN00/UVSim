@@ -390,8 +390,8 @@ class UVSimGUI:
                 self.value_entry.insert(0, " ".join(parts[1:]))
 
     def add_function(self):
-        if self.function_list.size() >= 100:
-            messagebox.showwarning("Limit Reached", "Maximum of 100 functions allowed.")
+        if self.function_list.size() >= 250:
+            messagebox.showwarning("Limit Reached", "Maximum of 250 functions allowed.")
             return
             
         code = self.code_entry.get().strip()
@@ -487,14 +487,15 @@ class UVSimGUI:
                 self.output.insert(END, error)
                 return
             
-            user_input = None
-            if str(self.cpu.memory.load(self.cpu.instruction_counter))[-4:-2] == "10":
-                user_input = self.get_valid_input()
+            while self.cpu.instruction_counter < 250:
+                user_input = None
+                if str(self.cpu.memory.load(self.cpu.instruction_counter))[-4:-2] == "10":
+                    user_input = self.get_valid_input()
 
-            output = self.cpu.run_next_command(user_input)
-            if output is not None:
-                self.output.insert(END, output + "\n")
-                self.output.see(END)  # Auto-scroll to bottom
+                output = self.cpu.run_next_command(user_input)
+                if output is not None:
+                    self.output.insert(END, output + "\n")
+                    self.output.see(END)  # Auto-scroll to bottom
         finally:
             # Clean up temporary file
             try:
