@@ -287,7 +287,7 @@ class UVSimGUI:
                     self.function_list.delete(0, tk.END)
                     
                     # Add to listbox
-                    for i, line in enumerate(lines[:100]):  # Limit to 100 entries
+                    for i, line in enumerate(lines):
                         self.function_list.insert(tk.END, f"{i:02d}: {line}")
                     
                     self.file_label.config(text=f"Selected: {os.path.basename(file_path)}")
@@ -436,15 +436,14 @@ class UVSimGUI:
                 self.output.insert(END, error)
                 return
             
-            while self.cpu.instruction_counter < 100:
-                user_input = None
-                if str(self.cpu.memory.load(self.cpu.instruction_counter))[-4:-2] == "10":
-                    user_input = self.get_valid_input()
+            user_input = None
+            if str(self.cpu.memory.load(self.cpu.instruction_counter))[-4:-2] == "10":
+                user_input = self.get_valid_input()
 
-                output = self.cpu.run_next_command(user_input)
-                if output is not None:
-                    self.output.insert(END, output + "\n")
-                    self.output.see(END)  # Auto-scroll to bottom
+            output = self.cpu.run_next_command(user_input)
+            if output is not None:
+                self.output.insert(END, output + "\n")
+                self.output.see(END)  # Auto-scroll to bottom
         finally:
             # Clean up temporary file
             try:

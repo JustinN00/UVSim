@@ -1,7 +1,7 @@
 
 class Memory:
     def __init__(self):
-        self.memory = [0] * 100
+        self.memory = [0] * 250
 
     def load(self, address: int) -> int:
         if address < 0 or address > 99:
