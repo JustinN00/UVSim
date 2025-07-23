@@ -108,14 +108,30 @@ class UVSimGUI:
         self.cut_button.grid(row=1, column=2, padx=2)
         
         self.copy_button = ttk.Button(self.button_frame, text="Copy", command=self.copy_function)
-        self.copy_button.grid(row=2, column=0, padx=2)
+        self.copy_button.grid(row=1, column=0, padx=2)
         
         self.paste_button = ttk.Button(self.button_frame, text="Paste", command=self.paste_function)
-        self.paste_button.grid(row=2, column=1, padx=2)
+        self.paste_button.grid(row=1, column=1, padx=2)
         
         # Execution controls
         self.run_button = ttk.Button(self.left_panel, text="Run Program", command=self.run_program)
         self.run_button.pack(pady=10, fill=tk.X)
+
+        # Color change buttons
+        self.color_button_frame = ttk.Frame(self.left_panel)
+        self.color_button_frame.pack(fill=tk.X, pady=5)
+
+        self.primary_color_btn = ttk.Button(self.color_button_frame, text="Color of Scheme", command=lambda: self.change_single_color('primary'))
+        self.primary_color_btn.pack(side=tk.LEFT, padx=2, expand=True)
+
+        self.secondary_color_btn = ttk.Button(self.color_button_frame, text="Color of Texts", command=lambda: self.change_single_color('secondary'))
+        self.secondary_color_btn.pack(side=tk.LEFT, padx=2, expand=True)
+
+        self.button_color_btn = ttk.Button(self.color_button_frame, text="Color of Buttons", command=self.change_button_color)
+        self.button_color_btn.pack(side=tk.LEFT, padx=2, expand=True)
+
+        # Bind window close event to reset colors
+        self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
         # Output area
         self.output_frame = ttk.Frame(self.right_panel)
@@ -188,6 +204,41 @@ class UVSimGUI:
         style.configure('TEntry', padding=5)
         style.configure('TLabel', padding=5)
         style.configure('TFrame', padding=5)
+
+
+    def change_single_color(self, color_type):
+    #Change either primary or secondary color
+        current_color = self.current_primary if color_type == 'primary' else self.current_secondary
+        new_color = colorchooser.askcolor(title=f"Choose {color_type} color", initialcolor=current_color)[1]
+        if new_color:
+            if color_type == 'primary':
+                self.current_primary = new_color
+            else:
+                self.current_secondary = new_color
+            self.save_color_scheme()
+            self.apply_color_scheme()
+
+    def change_button_color(self):
+    #Change the button foreground color
+        style = ttk.Style()
+        current_color = style.lookup('TButton', 'foreground')
+        new_color = colorchooser.askcolor(title="Choose button text color", initialcolor=current_color)[1]
+        if new_color:
+            style.configure('TButton', foreground=new_color)
+            style.map('TButton', foreground=[('active', new_color)])
+
+    def on_close(self):
+    #Reset colors and close the window
+        # Reset to default colors
+        self.current_primary = self.uvu_primary
+        self.current_secondary = self.uvu_secondary
+        style = ttk.Style()
+        style.configure('TButton', foreground='black')
+        style.map('TButton', foreground=[('active', 'black')])
+        
+        # Save and close
+        self.save_color_scheme()
+        self.window.destroy()
 
     def load_color_scheme(self):
         try:
