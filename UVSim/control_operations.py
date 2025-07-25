@@ -5,12 +5,12 @@ def branch(cpu, location):
     return f"BRANCH to {location}"
 
 def branchneg(cpu, location):
-    if cpu.accumulator < 0:
+    if int(cpu.accumulator) < 0:
         cpu.instruction_counter = location -1
         return f"BRANCHNEG to {location}"
 
 def branchzero(cpu, location):
-    if cpu.accumulator == 0:
+    if int(cpu.accumulator) == 0:
         cpu.instruction_counter = location -1
         return f"BRANCHZERO to {location}"
 

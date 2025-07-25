@@ -489,7 +489,12 @@ class UVSimGUI:
             
             while self.cpu.instruction_counter < 250:
                 user_input = None
-                if str(self.cpu.memory.load(self.cpu.instruction_counter))[-4:-2] == "10":
+                next_instruction = self.cpu.memory.load(self.cpu.instruction_counter)
+                for character in ["+","-"]:
+                    next_instruction = next_instruction.replace(character, "")
+                if len(next_instruction) == 4:
+                    next_instruction = "0" + next_instruction + "0"
+                if next_instruction[-6:-3] == "010":
                     user_input = self.get_valid_input()
 
                 output = self.cpu.run_next_command(user_input)
@@ -515,7 +520,7 @@ class UVSimGUI:
     def submit_input(self):
         try:
             value = int(self.input_var.get())
-            if -9999 <= value <= 9999:
+            if -999999 <= value <= 999999:
                 self.user_input_value = value
                 self.input_var.set("")
                 self.input_ready.set(True)

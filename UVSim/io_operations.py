@@ -7,4 +7,4 @@ def read(cpu, user_input, address: int):
 # Write a word from a specific location in memory to screen
 def write(cpu, address: int) -> str:
     value = cpu.memory.load(address)
-    return f"WRITE value (from memory[{address:02d}]): {value:+05d}"
+    return f"WRITE value (from memory[{address:02d}]): {value}"

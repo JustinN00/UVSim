@@ -2,10 +2,22 @@
 
 
 class FileLoader:
-    @staticmethod
-    def validate_insruction(line: str) -> str | None:
+    def __init__(self):
+        self.line_length = None
+    def validate_insruction(self, line: str) -> str | None:
         try:
             instruction = int(line)
+            stripped_line = line.strip()
+            for character in ["+","-","\n"]:
+                stripped_line = stripped_line.replace(character, "")
+            if self.line_length is None:
+                self.line_length = len(stripped_line)
+                if self.line_length not in [4,6]:
+                    return f"Length of operations must either 4 or 6, not {self.line_length}"
+            else:
+                if len(stripped_line) != self.line_length:
+                    return "Length of operations is mismatched, please use either 4 or 6 length operations for the whole program"
+
             if instruction > 999999 or instruction < -999999:
                 raise Exception
             return None
@@ -19,7 +31,7 @@ class FileLoader:
                 error = self.validate_insruction(instruction)
                 if error:
                     return None, error
-                validated_instructions.append(int(instruction))
+                validated_instructions.append(instruction.strip())
                 if len(validated_instructions) > 250:
                     return None, "Program exceeds max length of 250 lines, please shorten it."
                     
