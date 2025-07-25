@@ -8,6 +8,8 @@ import os
 class UVSimGUI:
     def __init__(self, cpu: NewCPU):
         # Variables
+        self.file_list = [None]
+        self.functionlists = []
         self.file_path = None
         self.cpu = cpu
         self.copied_function = None
@@ -59,16 +61,29 @@ class UVSimGUI:
         self.editor_label = ttk.Label(self.left_panel, text="Program Editor")
         self.editor_label.pack(pady=(10, 5), anchor='w')
         
-        self.editor_frame = ttk.Frame(self.left_panel)
-        self.editor_frame.pack(fill=tk.X, pady=5)
+
+        self.style = ttk.Style()
+        self.style.configure('TNotebook', tabposition = 'nw')
+        self.notebook = ttk.Notebook(self.left_panel)
+#        self.notebook.pack(fill=tk.X, pady=5)
+        self.notebook.pack(expand=True, fill='both')
+
+
+        # self.editor_frame = ttk.Frame(self.notebook)
+        # self.editor_frame.pack(fill=tk.X, pady=5)
+        # self.notebook.add(self.editor_frame, text = 'Tab')
+
         
-        self.function_list = tk.Listbox(self.editor_frame, height=15, width=30)
-        self.function_list.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar = ttk.Scrollbar(self.editor_frame, orient=tk.VERTICAL, command=self.function_list.yview)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.function_list.config(yscrollcommand=scrollbar.set)
-        self.function_list.bind('<<ListboxSelect>>', self.on_function_select)
+        # self.function_list = tk.Listbox(self.editor_frame, height=15, width=30)
+        # self.function_list.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # scrollbar = ttk.Scrollbar(self.editor_frame, orient=tk.VERTICAL, command=self.function_list.yview)
+        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        # self.function_list.config(yscrollcommand=scrollbar.set)
+        # self.function_list.bind('<<ListboxSelect>>', self.on_function_select)
+        # self.functionlists.append(self.function_list)
         
+        self.create_tab()
+
         # Editor controls
         self.edit_controls = ttk.Frame(self.left_panel)
         self.edit_controls.pack(fill=tk.X, pady=5)
@@ -325,6 +340,28 @@ class UVSimGUI:
         self.save_color_scheme()
         self.apply_color_scheme()
 
+
+    def create_tab(self):
+        self.editor_frame = ttk.Frame(self.notebook)
+        self.editor_frame.pack(fill=tk.X, pady=5)
+        print("HELLO WORLD")
+        print("FILE: " + str(self.file_path))
+        print("TEST: " + str(self.file_path is None))
+        tab_name = 'No file' if self.file_path is None else os.path.basename(self.file_path)
+        self.notebook.add(self.editor_frame, text = tab_name)
+
+        self.function_list = tk.Listbox(self.editor_frame, height=15, width=30)
+        self.function_list.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar = ttk.Scrollbar(self.editor_frame, orient=tk.VERTICAL, command=self.function_list.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.function_list.config(yscrollcommand=scrollbar.set)
+        self.function_list.bind('<<ListboxSelect>>', self.on_function_select)
+        self.functionlists.append(self.function_list)
+
+        self.notebook.select(self.editor_frame)
+
+
+
     def select_file(self):
         """Prompt user to select a txt file"""
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
@@ -334,15 +371,18 @@ class UVSimGUI:
                     # Read and parse the file
                     lines = [line.strip() for line in f.readlines() if line.strip()]
                     
-                    # Clear current functions
-                    self.function_list.delete(0, tk.END)
-                    
+                    # Keep track of file
+                    self.file_list.append(file_path)
+                    self.file_path = file_path
+
+                    self.create_tab()
+
                     # Add to listbox
                     for i, line in enumerate(lines):
                         self.function_list.insert(tk.END, f"{i:02d}: {line}")
                     
                     self.file_label.config(text=f"Selected: {os.path.basename(file_path)}")
-                    self.file_path = file_path
+
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load file: {str(e)}")
 
@@ -472,6 +512,10 @@ class UVSimGUI:
     def run_program(self):
         """Pass file path to cpu and run"""
         self.output.delete(1.0, END)
+
+        print("RUNNING with index: " + str(self.notebook.index('current')))
+
+        self.function_list = self.functionlists[self.notebook.index('current')]
         
         # Create a temporary file with current functions
         temp_file = "temp_program.txt"
