@@ -9,7 +9,7 @@ class UVSimGUI:
     def __init__(self, cpu: NewCPU):
         # Variables
         self.file_list = [None]
-        self.functionlists = []
+        self.function_list_list = []
         self.file_path = None
         self.cpu = cpu
         self.copied_function = None
@@ -44,10 +44,7 @@ class UVSimGUI:
         self.right_panel = ttk.Frame(self.main_frame)
         self.right_panel.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # File controls
-        self.file_label = ttk.Label(self.left_panel, text="No file selected", wraplength=150)
-        self.file_label.pack(pady=5, anchor='w')
-        
+        # File controls        
         self.file_button = ttk.Button(self.left_panel, text="Open File", command=self.select_file)
         self.file_button.pack(pady=5, fill=tk.X)
         
@@ -59,28 +56,19 @@ class UVSimGUI:
 
         # Program editor
         self.editor_label = ttk.Label(self.left_panel, text="Program Editor")
-        self.editor_label.pack(pady=(10, 5), anchor='w')
+        self.editor_label.pack(anchor='w')
         
+        close_button_frame = ttk.Frame(self.left_panel)
+        close_button_frame.pack(fill=tk.X)
+
+        self.close_tab_button = ttk.Button(close_button_frame, text="Close Active Tab", command=self.close_active_tab)
+        self.close_tab_button.pack(side="right")
 
         self.style = ttk.Style()
         self.style.configure('TNotebook', tabposition = 'nw')
         self.notebook = ttk.Notebook(self.left_panel)
 #        self.notebook.pack(fill=tk.X, pady=5)
         self.notebook.pack(expand=True, fill='both')
-
-
-        # self.editor_frame = ttk.Frame(self.notebook)
-        # self.editor_frame.pack(fill=tk.X, pady=5)
-        # self.notebook.add(self.editor_frame, text = 'Tab')
-
-        
-        # self.function_list = tk.Listbox(self.editor_frame, height=15, width=30)
-        # self.function_list.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        # scrollbar = ttk.Scrollbar(self.editor_frame, orient=tk.VERTICAL, command=self.function_list.yview)
-        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        # self.function_list.config(yscrollcommand=scrollbar.set)
-        # self.function_list.bind('<<ListboxSelect>>', self.on_function_select)
-        # self.functionlists.append(self.function_list)
         
         self.create_tab()
 
@@ -344,9 +332,6 @@ class UVSimGUI:
     def create_tab(self):
         self.editor_frame = ttk.Frame(self.notebook)
         self.editor_frame.pack(fill=tk.X, pady=5)
-        print("HELLO WORLD")
-        print("FILE: " + str(self.file_path))
-        print("TEST: " + str(self.file_path is None))
         tab_name = 'No file' if self.file_path is None else os.path.basename(self.file_path)
         self.notebook.add(self.editor_frame, text = tab_name)
 
@@ -356,10 +341,16 @@ class UVSimGUI:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.function_list.config(yscrollcommand=scrollbar.set)
         self.function_list.bind('<<ListboxSelect>>', self.on_function_select)
-        self.functionlists.append(self.function_list)
+        self.function_list_list.append(self.function_list)
 
         self.notebook.select(self.editor_frame)
 
+
+    def close_active_tab(self):
+        index = self.notebook.index('current')
+        del self.file_list[index]
+        del self.function_list_list[index]
+        self.notebook.forget(index)
 
 
     def select_file(self):
@@ -380,8 +371,6 @@ class UVSimGUI:
                     # Add to listbox
                     for i, line in enumerate(lines):
                         self.function_list.insert(tk.END, f"{i:02d}: {line}")
-                    
-                    self.file_label.config(text=f"Selected: {os.path.basename(file_path)}")
 
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load file: {str(e)}")
@@ -513,9 +502,7 @@ class UVSimGUI:
         """Pass file path to cpu and run"""
         self.output.delete(1.0, END)
 
-        print("RUNNING with index: " + str(self.notebook.index('current')))
-
-        self.function_list = self.functionlists[self.notebook.index('current')]
+        self.function_list = self.function_list_list[self.notebook.index('current')]
         
         # Create a temporary file with current functions
         temp_file = "temp_program.txt"
