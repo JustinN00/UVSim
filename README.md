@@ -18,7 +18,7 @@ How to run:
 
 UVSim consists of:
 
-    100-word memory (locations 00-99)
+    250-word memory (locations 00-249)
 
     Accumulator register for calculations
 
@@ -26,48 +26,55 @@ UVSim consists of:
 
     Instruction set with 13 operations
 
+    Functionality to support multiple files simultaneously
+
 BasicML Instruction Format
 
-Each instruction is a signed four-digit decimal number:
+UV SIM  supports signed four-digit and signed six-digit number files.
 
-    First 2 digits: Operation code
+    NOTE: All four-digit number files will be converted into six-digit number files by the program. Conversion is done by adding a 0 to both the front of the file and the front of the memory address. 
+    
+Instructions for a signed six-digit number:
 
-    Last 2 digits: Memory address operand
+    First 3 digits: 0 + Operation code
 
-    Example: +3015 = ADD operation using memory location 15
+    Last 3 digits: Memory address operand
 
+    Example: +030015 = ADD operation using memory location 15
+
+    
 Instruction Set
 I/O Operations
 
-    10 READ - Read from keyboard into memory
+    010 READ - Read from keyboard into memory
 
-    11 WRITE - Write from memory to screen
+    011 WRITE - Write from memory to screen
 
 Load/Store Operations
 
-    20 LOAD - Memory → Accumulator
+    020 LOAD - Memory → Accumulator
 
-    21 STORE - Accumulator → Memory
+    021 STORE - Accumulator → Memory
 
 Arithmetic Operations
 
-    30 ADD - Memory + Accumulator → Accumulator
+    030 ADD - Memory + Accumulator → Accumulator
 
-    31 SUBTRACT - Accumulator - Memory → Accumulator
+    031 SUBTRACT - Accumulator - Memory → Accumulator
 
-    32 DIVIDE - Accumulator / Memory → Accumulator
+    032 DIVIDE - Accumulator / Memory → Accumulator
 
-    33 MULTIPLY - Accumulator * Memory → Accumulator
+    033 MULTIPLY - Accumulator * Memory → Accumulator
 
 Control Operations
 
-    40 BRANCH - Jump to address
+    040 BRANCH - Jump to address
 
-    41 BRANCHNEG - Jump if accumulator negative
+    041 BRANCHNEG - Jump if accumulator negative
 
-    42 BRANCHZERO - Jump if accumulator zero
+    042 BRANCHZERO - Jump if accumulator zero
 
-    43 HALT - Stop execution
+    043 HALT - Stop execution
 
 
 GUI Controls
@@ -91,6 +98,8 @@ The interface includes the following elements:
     Input field: Accepts user input when prompted by READ instructions
     
     Submit button: Submit typed input
+
+
 
 
 
