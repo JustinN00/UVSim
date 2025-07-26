@@ -14,7 +14,7 @@ class UVSimGUI:
         self.cpu = cpu
         self.copied_function = None
         self.uvu_primary = "#4C721D"  # UVU green
-        self.uvu_secondary = "#FFFFFF"  # White
+        self.uvu_secondary = "#808080"  # Gray
         self.current_primary = self.uvu_primary
         self.current_secondary = self.uvu_secondary
 
