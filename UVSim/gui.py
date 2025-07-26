@@ -21,7 +21,7 @@ class UVSimGUI:
         # Window setup
         self.window = tk.Tk()
         self.window.title("UVSim")
-        self.window.geometry("900x750")
+        self.window.geometry("900x850")
         
         # Load saved color scheme
         self.load_color_scheme()
