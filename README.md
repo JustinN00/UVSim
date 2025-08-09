@@ -89,7 +89,7 @@ The interface includes the following elements:
 
     Add, Update, Delete: Modify instructions
 
-    ↑, ↓, Cut, Copy, Paste: Rearrange or duplicate instructions
+    Cut, Copy, Paste: Rearrange or duplicate instructions
 
     'Run Program': Execute the program
 
