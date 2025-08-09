@@ -86,6 +86,10 @@ The interface includes the following elements:
     'Save File' and 'Save As': Save the current program
 
     Program Editor: Edit each instruction by line, using the Code and Value fields
+    
+    Code Field: Represents the instruction opcode (e.g., READ, ADD, BRANCH) or its mnemonic (if assembly support is enabled).
+
+    Value Field: Represents the operand (memory address or data) associated with the instruction.
 
     Add, Update, Delete: Modify instructions
 
